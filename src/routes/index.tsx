@@ -1,23 +1,43 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Bot, LogIn } from "lucide-react";
-import { useId } from "react";
 import login from "@/assets/login.svg";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useAppForm } from "@/lib/form";
+import {
+	type LoginSchema,
+	loginSchema,
+} from "@/modules/authentication/schemas";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const emailId = useId();
-	const passwordId = useId();
+	const defaultValues: LoginSchema = {
+		email: "",
+		password: "",
+	};
+
+	const form = useAppForm({
+		defaultValues,
+		validators: {
+			onChange: loginSchema,
+		},
+		onSubmit: async ({ value }) => {
+			console.log(value);
+		},
+	});
 
 	return (
 		<main className="grid md:grid-cols-2 p-4 h-svh gap-x-20">
 			<section className="grid place-items-center">
-				<form className="flex flex-col gap-y-8 justify-center max-w-[450px]">
+				<form
+					className="flex flex-col gap-y-8 justify-center max-w-[450px]"
+					onSubmit={(event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						form.handleSubmit();
+					}}
+				>
 					<div className="font-mono flex items-center text-xl gap-x-2 ">
 						<Bot className="size-6" />
 						cs-chat
@@ -29,22 +49,29 @@ function RouteComponent() {
 						</span>
 					</div>
 					<div className="flex-col flex gap-y-3">
-						<div className="flex flex-col gap-y-1.5">
-							<Label htmlFor={emailId}>Email</Label>
-							<Input type="email" id={emailId} placeholder="Enter your email" />
-						</div>
-						<div className="flex flex-col gap-y-1.5">
-							<Label htmlFor={passwordId}>Password</Label>
-							<Input
-								type="password"
-								id={passwordId}
-								placeholder="Enter your password"
-							/>
-						</div>
-						<Button type="submit" size="lg" className="mt-4.5 w-fit">
-							<LogIn />
-							Sign In
-						</Button>
+						<form.AppField name="email">
+							{(field) => (
+								<field.Input
+									type="email"
+									placeholder="Enter your email"
+									autoComplete="work email"
+									label="Email Address"
+								/>
+							)}
+						</form.AppField>
+						<form.AppField name="password">
+							{(field) => (
+								<field.Input
+									type="password"
+									placeholder="Enter your password"
+									autoComplete="current-password"
+									label="Password"
+								/>
+							)}
+						</form.AppField>
+						<form.AppForm>
+							<form.Button icon={<LogIn />}>Sign In</form.Button>
+						</form.AppForm>
 					</div>
 				</form>
 			</section>
