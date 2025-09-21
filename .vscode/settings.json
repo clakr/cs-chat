@@ -16,6 +16,6 @@
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
-    "source.removeUnusedImports": "explicit"
+    "source.removeUnusedImports": "explicit",
   }
 }

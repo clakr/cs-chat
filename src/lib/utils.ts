@@ -1,6 +1,17 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+	return twMerge(clsx(inputs));
+}
+
+export function getAvatar(seed: string) {
+	const url = new URL("https://api.dicebear.com/9.x/notionists/svg");
+
+	url.searchParams.set("backgroundColor", "d87943");
+	url.searchParams.set("backgroundType", "gradientLinear");
+
+	if (seed) url.searchParams.set("seed", seed);
+
+	return url.toString();
 }

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_guest")({
 
 		if (isAuthenticated)
 			throw redirect({
-				to: "/dashboard",
+				to: "/a",
 				replace: true,
 			});
 	},
