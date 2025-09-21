@@ -20,7 +20,7 @@ function RouteComponent() {
 	const defaultValues: LoginSchema = {
 		email: "",
 		password: "",
-	}
+	};
 
 	const form = useAppForm({
 		defaultValues,
@@ -35,21 +35,21 @@ function RouteComponent() {
 						fields: {},
 						form: error,
 					},
-				})
+				});
 
-				return
+				return;
 			}
 
 			navigate({
-				to: "/dashboard",
-			})
+				to: "/a",
+			});
 		},
 	});
 
 	const formError = useStore(
 		form.store,
 		(state) => state.errorMap.onSubmit as unknown as Error,
-	)
+	);
 
 	return (
 		<main className="grid md:grid-cols-2 p-4 h-svh gap-x-20">
@@ -112,5 +112,5 @@ function RouteComponent() {
 				<img src={login} alt="" />
 			</section>
 		</main>
-	)
+	);
 }

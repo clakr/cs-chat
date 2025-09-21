@@ -1,10 +1,23 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { LogOut } from "lucide-react";
+import {
+	createFileRoute,
+	Link,
+	Outlet,
+	redirect,
+} from "@tanstack/react-router";
+import { ChevronDown, LayoutDashboard, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupContent,
 	SidebarHeader,
 	SidebarInset,
 	SidebarMenu,
@@ -53,8 +66,46 @@ function RouteComponent() {
 	return (
 		<SidebarProvider>
 			<Sidebar variant="inset">
-				<SidebarHeader>header</SidebarHeader>
-				<SidebarContent>content</SidebarContent>
+				<SidebarHeader>
+					<SidebarMenu>
+						<SidebarMenuItem>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<SidebarMenuButton>
+										Select Workspace
+										<ChevronDown className="ml-auto" />
+									</SidebarMenuButton>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<DropdownMenuItem>
+										<span>Acme Inc</span>
+									</DropdownMenuItem>
+									<DropdownMenuItem>
+										<span>Acme Corp.</span>
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarHeader>
+
+				<SidebarContent>
+					<SidebarGroup>
+						<SidebarGroupContent>
+							<SidebarMenu>
+								<SidebarMenuItem>
+									<SidebarMenuButton asChild>
+										<Link to="/a" activeProps={{ "data-active": true }}>
+											<LayoutDashboard />
+											Dashboard
+										</Link>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				</SidebarContent>
+
 				<SidebarFooter>
 					<SidebarMenu>
 						<SidebarMenuItem>
@@ -66,7 +117,9 @@ function RouteComponent() {
 					</SidebarMenu>
 				</SidebarFooter>
 			</Sidebar>
-			<SidebarInset>inset</SidebarInset>
+			<SidebarInset>
+				<Outlet />
+			</SidebarInset>
 		</SidebarProvider>
 	);
 }

@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as GuestRouteRouteImport } from './routes/_guest/route'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as GuestIndexRouteImport } from './routes/_guest/index'
-import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
+import { Route as AuthedARouteRouteImport } from './routes/_authed/a/route'
 
 const GuestRouteRoute = GuestRouteRouteImport.update({
   id: '/_guest',
@@ -27,33 +27,33 @@ const GuestIndexRoute = GuestIndexRouteImport.update({
   path: '/',
   getParentRoute: () => GuestRouteRoute,
 } as any)
-const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthedARouteRoute = AuthedARouteRouteImport.update({
+  id: '/a',
+  path: '/a',
   getParentRoute: () => AuthedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/dashboard': typeof AuthedDashboardRoute
+  '/a': typeof AuthedARouteRoute
   '/': typeof GuestIndexRoute
 }
 export interface FileRoutesByTo {
-  '/dashboard': typeof AuthedDashboardRoute
+  '/a': typeof AuthedARouteRoute
   '/': typeof GuestIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authed': typeof AuthedRouteRouteWithChildren
   '/_guest': typeof GuestRouteRouteWithChildren
-  '/_authed/dashboard': typeof AuthedDashboardRoute
+  '/_authed/a': typeof AuthedARouteRoute
   '/_guest/': typeof GuestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/dashboard' | '/'
+  fullPaths: '/a' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/dashboard' | '/'
-  id: '__root__' | '/_authed' | '/_guest' | '/_authed/dashboard' | '/_guest/'
+  to: '/a' | '/'
+  id: '__root__' | '/_authed' | '/_guest' | '/_authed/a' | '/_guest/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -84,22 +84,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuestIndexRouteImport
       parentRoute: typeof GuestRouteRoute
     }
-    '/_authed/dashboard': {
-      id: '/_authed/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthedDashboardRouteImport
+    '/_authed/a': {
+      id: '/_authed/a'
+      path: '/a'
+      fullPath: '/a'
+      preLoaderRoute: typeof AuthedARouteRouteImport
       parentRoute: typeof AuthedRouteRoute
     }
   }
 }
 
 interface AuthedRouteRouteChildren {
-  AuthedDashboardRoute: typeof AuthedDashboardRoute
+  AuthedARouteRoute: typeof AuthedARouteRoute
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
-  AuthedDashboardRoute: AuthedDashboardRoute,
+  AuthedARouteRoute: AuthedARouteRoute,
 }
 
 const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
