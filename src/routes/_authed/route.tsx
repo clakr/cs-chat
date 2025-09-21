@@ -36,13 +36,13 @@ import {
 	SidebarProvider,
 	useSidebar,
 } from "@/components/ui/sidebar";
+import { supabase } from "@/integrations/supabase";
 import {
 	UpdateProfileDialog,
 	useUpdateProfileDialog,
 } from "@/modules/profile/components/update-profile-dialog";
 import { useProfile } from "@/modules/profile/hooks/use-profile";
 import { profileQueryOptions } from "@/modules/profile/query-options";
-import { supabase } from "@/supabase";
 
 export const Route = createFileRoute("/_authed")({
 	component: RouteComponent,

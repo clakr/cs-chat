@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase";
 import type { UpdateProfileSchema } from "@/modules/profile/schemas";
-import { supabase } from "@/supabase";
 
 export function useUpdateProfileMutation() {
 	return useMutation({

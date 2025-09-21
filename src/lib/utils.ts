@@ -9,7 +9,6 @@ export function getAvatar(seed: string) {
 	const url = new URL("https://api.dicebear.com/9.x/notionists/svg");
 
 	url.searchParams.set("backgroundColor", "d87943");
-	url.searchParams.set("backgroundType", "gradientLinear");
 
 	if (seed) url.searchParams.set("seed", seed);
 

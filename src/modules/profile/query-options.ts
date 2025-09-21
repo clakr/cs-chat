@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { supabase } from "@/supabase";
+import { supabase } from "@/integrations/supabase";
 
 export const profileQueryOptions = queryOptions({
 	queryKey: ["profile"],

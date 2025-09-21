@@ -58,7 +58,7 @@ export function UpdateProfileDialog() {
 
 	return (
 		<Dialog open={isOpen} onOpenChange={handleToggle}>
-			<DialogContent className="sm:max-w-[425px]">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Edit profile</DialogTitle>
 					<DialogDescription>

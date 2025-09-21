@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { supabase } from "@/supabase";
+import { supabase } from "@/integrations/supabase";
 
 export const Route = createFileRoute("/_guest")({
 	component: RouteComponent,

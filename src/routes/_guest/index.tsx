@@ -1,14 +1,14 @@
 import { useStore } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
 import { AlertCircleIcon, Bot, LogIn } from "lucide-react";
-import login from "@/assets/login.svg";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase";
 import { useAppForm } from "@/lib/form";
+import login from "@/modules/authentication/assets/login.svg";
 import {
 	type LoginSchema,
 	loginSchema,
 } from "@/modules/authentication/schemas";
-import { supabase } from "@/supabase";
 
 export const Route = createFileRoute("/_guest/")({
 	component: RouteComponent,
