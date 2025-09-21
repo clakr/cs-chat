@@ -1,5 +1,17 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { LogOut } from "lucide-react";
+import { toast } from "sonner";
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarHeader,
+	SidebarInset,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+	SidebarProvider,
+} from "@/components/ui/sidebar";
 import { supabase } from "@/supabase";
 
 export const Route = createFileRoute("/_authed")({
@@ -27,7 +39,9 @@ function RouteComponent() {
 		const { error } = await supabase.auth.signOut();
 
 		if (error) {
-			console.error(error);
+			toast.error(error.name, {
+				description: error.message,
+			});
 			return;
 		}
 
@@ -37,9 +51,22 @@ function RouteComponent() {
 	}
 
 	return (
-		<>
-			<Button onClick={handleLogout}>Logout</Button>
-			<Outlet />
-		</>
+		<SidebarProvider>
+			<Sidebar variant="inset">
+				<SidebarHeader>header</SidebarHeader>
+				<SidebarContent>content</SidebarContent>
+				<SidebarFooter>
+					<SidebarMenu>
+						<SidebarMenuItem>
+							<SidebarMenuButton onClick={handleLogout}>
+								<LogOut />
+								Logout
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarFooter>
+			</Sidebar>
+			<SidebarInset>inset</SidebarInset>
+		</SidebarProvider>
 	);
 }

@@ -2,6 +2,7 @@ import { TanstackDevtools } from "@tanstack/react-devtools";
 import { FormDevtools } from "@tanstack/react-form-devtools";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createRootRoute({
 	component: () => (
@@ -9,7 +10,7 @@ export const Route = createRootRoute({
 			<Outlet />
 			<TanstackDevtools
 				config={{
-					position: "bottom-left",
+					position: "top-right",
 				}}
 				plugins={[
 					{
@@ -22,6 +23,7 @@ export const Route = createRootRoute({
 					},
 				]}
 			/>
+			<Toaster position="top-center" />
 		</>
 	),
 });
