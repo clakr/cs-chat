@@ -58,7 +58,7 @@ import {
 	useUpdateProfileDialog,
 } from "@/modules/profile/components/update-profile-dialog";
 import { useProfile } from "@/modules/profile/hooks/use-profile";
-import { profileQueryOptions } from "@/modules/profile/query-options";
+import { profileQueryOption } from "@/modules/profile/query-options";
 import {
 	CreateUserDialog,
 	useCreateUserDialog,
@@ -81,7 +81,7 @@ export const Route = createFileRoute("/_authed")({
 		}
 	},
 	async loader({ context: { queryClient } }) {
-		await queryClient.ensureQueryData(profileQueryOptions);
+		await queryClient.ensureQueryData(profileQueryOption);
 	},
 });
 

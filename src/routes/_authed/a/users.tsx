@@ -1,16 +1,23 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCreateUserDialog } from "@/modules/users/components/create-user-dialog";
+import { usersQueryOption } from "@/modules/users/query-options";
 
 export const Route = createFileRoute("/_authed/a/users")({
 	component: RouteComponent,
+	async loader({ context: { queryClient } }) {
+		await queryClient.ensureQueryData(usersQueryOption);
+	},
 });
 
 function RouteComponent() {
 	const handleOpenCreateUserDialog = useCreateUserDialog(
 		(state) => state.handleOpen,
 	);
+
+	const { data: profiles } = useSuspenseQuery(usersQueryOption);
 
 	return (
 		<main className="mx-auto w-full max-w-7xl p-8">
@@ -21,6 +28,7 @@ function RouteComponent() {
 					Create User
 				</Button>
 			</section>
+			<pre>{JSON.stringify(profiles, null, 2)}</pre>
 		</main>
 	);
 }

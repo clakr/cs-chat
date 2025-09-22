@@ -76,21 +76,58 @@ grant truncate on table "public"."profiles" to "service_role";
 
 grant update on table "public"."profiles" to "service_role";
 
-create policy "Enable delete for users based on user_id"
-on "public"."profiles"
-as permissive
-for update
-to public
-using ((( SELECT auth.uid() AS uid) = id))
-with check ((( SELECT auth.uid() AS uid) = id));
+CREATE OR REPLACE FUNCTION public.get_current_user_role()
+RETURNS public.user_roles
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT role FROM public.profiles WHERE id = auth.uid();
+$$;
+
+CREATE POLICY "profiles_update_policy" ON public.profiles
+  AS PERMISSIVE FOR UPDATE
+  TO authenticated
+  USING (
+    public.get_current_user_role() = 'admin'
+    OR
+    (public.get_current_user_role() = 'organization_manager' AND 
+     -- TODO: Uncomment when organizations are implemented
+     -- organization_id = public.get_current_user_organization_id() AND
+     -- organization_id IS NOT NULL
+     id = auth.uid())
+    OR
+    id = auth.uid()
+  )
+  WITH CHECK (
+    public.get_current_user_role() = 'admin'
+    OR
+    (public.get_current_user_role() = 'organization_manager' AND 
+     -- TODO: Uncomment when organizations are implemented
+     -- organization_id = public.get_current_user_organization_id() AND
+     -- organization_id IS NOT NULL
+     id = auth.uid())
+    OR
+    id = auth.uid()
+  );
 
 
-create policy "Enable users to view their own data only"
-on "public"."profiles"
-as permissive
-for select
-to authenticated
-using ((( SELECT auth.uid() AS uid) = id));
+
+CREATE POLICY "profiles_select_policy" ON public.profiles
+  AS PERMISSIVE FOR SELECT
+  TO authenticated
+  USING (
+    public.get_current_user_role() = 'admin'
+    OR
+    (public.get_current_user_role() = 'organization_manager' AND 
+     -- TODO: Uncomment when organizations are implemented
+     -- organization_id = public.get_current_user_organization_id() AND
+     -- organization_id IS NOT NULL
+     id = auth.uid())
+    OR
+    id = auth.uid()
+  );
+
 
 CREATE TRIGGER on_auth_user_created
 AFTER INSERT ON auth.users

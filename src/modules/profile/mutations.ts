@@ -16,9 +16,16 @@ export function useUpdateProfileMutation() {
 			if (error) throw error;
 		},
 		meta: {
-			invalidatesQuery: ["profile"],
 			errorTitle: "Failed to update profile",
 			successMessage: "Profile updated successfully",
+		},
+		onSettled: (_, __, ___, ____, { client }) => {
+			client.invalidateQueries({
+				queryKey: ["profile"],
+			});
+			client.invalidateQueries({
+				queryKey: ["users"],
+			});
 		},
 	});
 }

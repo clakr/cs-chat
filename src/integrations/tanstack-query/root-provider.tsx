@@ -11,7 +11,7 @@ declare module "@tanstack/react-query" {
 		mutationMeta: {
 			errorTitle: string;
 			successMessage: string;
-			invalidatesQuery: QueryKey;
+			invalidatesQuery?: QueryKey;
 		};
 	}
 }
