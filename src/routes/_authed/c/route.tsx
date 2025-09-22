@@ -3,14 +3,14 @@ import { supabase } from "@/integrations/supabase";
 import { roleRedirectMapping } from "@/modules/authentication/constants";
 import { userRolesSchema } from "@/modules/users/schemas";
 
-export const Route = createFileRoute("/_authed/a")({
+export const Route = createFileRoute("/_authed/c")({
 	component: RouteComponent,
 	async beforeLoad() {
 		const session = await supabase.auth.getSession();
 		const user = session.data.session?.user;
 
 		const role = userRolesSchema.parse(user?.user_metadata.role);
-		if (role === "admin") return;
+		if (role === "counselor") return;
 
 		throw redirect({
 			to: roleRedirectMapping[role],

@@ -129,7 +129,7 @@ function RouteComponent() {
 												activeProps={{ "data-active": true }}
 											>
 												<LayoutDashboard />
-												Dashboard
+												Admin Dashboard
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>

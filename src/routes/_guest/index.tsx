@@ -5,10 +5,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase";
 import { useAppForm } from "@/lib/form";
 import login from "@/modules/authentication/assets/login.svg";
+import { roleRedirectMapping } from "@/modules/authentication/constants";
 import {
 	type LoginSchema,
 	loginSchema,
 } from "@/modules/authentication/schemas";
+import { userRolesSchema } from "@/modules/users/schemas";
 
 export const Route = createFileRoute("/_guest/")({
 	component: RouteComponent,
@@ -28,7 +30,7 @@ function RouteComponent() {
 			onChange: loginSchema,
 		},
 		onSubmit: async ({ value: payload }) => {
-			const { error } = await supabase.auth.signInWithPassword(payload);
+			const { error, data } = await supabase.auth.signInWithPassword(payload);
 			if (error) {
 				form.setErrorMap({
 					onSubmit: {
@@ -40,8 +42,12 @@ function RouteComponent() {
 				return;
 			}
 
+			const role = userRolesSchema.parse(data.user.user_metadata.role);
+
+			const to = roleRedirectMapping[role];
+
 			navigate({
-				to: "/a",
+				to,
 			});
 		},
 	});

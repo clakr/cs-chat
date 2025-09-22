@@ -12,7 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as GuestRouteRouteImport } from './routes/_guest/route'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as GuestIndexRouteImport } from './routes/_guest/index'
+import { Route as AuthedOmRouteRouteImport } from './routes/_authed/om/route'
+import { Route as AuthedCRouteRouteImport } from './routes/_authed/c/route'
 import { Route as AuthedARouteRouteImport } from './routes/_authed/a/route'
+import { Route as AuthedOmIndexRouteImport } from './routes/_authed/om/index'
+import { Route as AuthedCIndexRouteImport } from './routes/_authed/c/index'
 import { Route as AuthedAIndexRouteImport } from './routes/_authed/a/index'
 import { Route as AuthedAUsersRouteImport } from './routes/_authed/a/users'
 
@@ -29,10 +33,30 @@ const GuestIndexRoute = GuestIndexRouteImport.update({
   path: '/',
   getParentRoute: () => GuestRouteRoute,
 } as any)
+const AuthedOmRouteRoute = AuthedOmRouteRouteImport.update({
+  id: '/om',
+  path: '/om',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedCRouteRoute = AuthedCRouteRouteImport.update({
+  id: '/c',
+  path: '/c',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
 const AuthedARouteRoute = AuthedARouteRouteImport.update({
   id: '/a',
   path: '/a',
   getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedOmIndexRoute = AuthedOmIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthedOmRouteRoute,
+} as any)
+const AuthedCIndexRoute = AuthedCIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthedCRouteRoute,
 } as any)
 const AuthedAIndexRoute = AuthedAIndexRouteImport.update({
   id: '/',
@@ -47,37 +71,51 @@ const AuthedAUsersRoute = AuthedAUsersRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/a': typeof AuthedARouteRouteWithChildren
+  '/c': typeof AuthedCRouteRouteWithChildren
+  '/om': typeof AuthedOmRouteRouteWithChildren
   '/': typeof GuestIndexRoute
   '/a/users': typeof AuthedAUsersRoute
   '/a/': typeof AuthedAIndexRoute
+  '/c/': typeof AuthedCIndexRoute
+  '/om/': typeof AuthedOmIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof GuestIndexRoute
   '/a/users': typeof AuthedAUsersRoute
   '/a': typeof AuthedAIndexRoute
+  '/c': typeof AuthedCIndexRoute
+  '/om': typeof AuthedOmIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authed': typeof AuthedRouteRouteWithChildren
   '/_guest': typeof GuestRouteRouteWithChildren
   '/_authed/a': typeof AuthedARouteRouteWithChildren
+  '/_authed/c': typeof AuthedCRouteRouteWithChildren
+  '/_authed/om': typeof AuthedOmRouteRouteWithChildren
   '/_guest/': typeof GuestIndexRoute
   '/_authed/a/users': typeof AuthedAUsersRoute
   '/_authed/a/': typeof AuthedAIndexRoute
+  '/_authed/c/': typeof AuthedCIndexRoute
+  '/_authed/om/': typeof AuthedOmIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/a' | '/' | '/a/users' | '/a/'
+  fullPaths: '/a' | '/c' | '/om' | '/' | '/a/users' | '/a/' | '/c/' | '/om/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/a/users' | '/a'
+  to: '/' | '/a/users' | '/a' | '/c' | '/om'
   id:
     | '__root__'
     | '/_authed'
     | '/_guest'
     | '/_authed/a'
+    | '/_authed/c'
+    | '/_authed/om'
     | '/_guest/'
     | '/_authed/a/users'
     | '/_authed/a/'
+    | '/_authed/c/'
+    | '/_authed/om/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -108,12 +146,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuestIndexRouteImport
       parentRoute: typeof GuestRouteRoute
     }
+    '/_authed/om': {
+      id: '/_authed/om'
+      path: '/om'
+      fullPath: '/om'
+      preLoaderRoute: typeof AuthedOmRouteRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/c': {
+      id: '/_authed/c'
+      path: '/c'
+      fullPath: '/c'
+      preLoaderRoute: typeof AuthedCRouteRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
     '/_authed/a': {
       id: '/_authed/a'
       path: '/a'
       fullPath: '/a'
       preLoaderRoute: typeof AuthedARouteRouteImport
       parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/om/': {
+      id: '/_authed/om/'
+      path: '/'
+      fullPath: '/om/'
+      preLoaderRoute: typeof AuthedOmIndexRouteImport
+      parentRoute: typeof AuthedOmRouteRoute
+    }
+    '/_authed/c/': {
+      id: '/_authed/c/'
+      path: '/'
+      fullPath: '/c/'
+      preLoaderRoute: typeof AuthedCIndexRouteImport
+      parentRoute: typeof AuthedCRouteRoute
     }
     '/_authed/a/': {
       id: '/_authed/a/'
@@ -146,12 +212,40 @@ const AuthedARouteRouteWithChildren = AuthedARouteRoute._addFileChildren(
   AuthedARouteRouteChildren,
 )
 
+interface AuthedCRouteRouteChildren {
+  AuthedCIndexRoute: typeof AuthedCIndexRoute
+}
+
+const AuthedCRouteRouteChildren: AuthedCRouteRouteChildren = {
+  AuthedCIndexRoute: AuthedCIndexRoute,
+}
+
+const AuthedCRouteRouteWithChildren = AuthedCRouteRoute._addFileChildren(
+  AuthedCRouteRouteChildren,
+)
+
+interface AuthedOmRouteRouteChildren {
+  AuthedOmIndexRoute: typeof AuthedOmIndexRoute
+}
+
+const AuthedOmRouteRouteChildren: AuthedOmRouteRouteChildren = {
+  AuthedOmIndexRoute: AuthedOmIndexRoute,
+}
+
+const AuthedOmRouteRouteWithChildren = AuthedOmRouteRoute._addFileChildren(
+  AuthedOmRouteRouteChildren,
+)
+
 interface AuthedRouteRouteChildren {
   AuthedARouteRoute: typeof AuthedARouteRouteWithChildren
+  AuthedCRouteRoute: typeof AuthedCRouteRouteWithChildren
+  AuthedOmRouteRoute: typeof AuthedOmRouteRouteWithChildren
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
   AuthedARouteRoute: AuthedARouteRouteWithChildren,
+  AuthedCRouteRoute: AuthedCRouteRouteWithChildren,
+  AuthedOmRouteRoute: AuthedOmRouteRouteWithChildren,
 }
 
 const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
