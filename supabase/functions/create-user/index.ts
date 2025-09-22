@@ -17,12 +17,15 @@ serve(async (req) => {
 			Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 		);
 
-		const { email } = await req.json();
+		const payload = await req.json();
 
 		const { data, error } = await supabaseAdmin.auth.admin.createUser({
-			email,
-			password: "password",
-			email_confirm: true,
+			email: payload.email,
+			password: payload.password,
+			email_confirm: payload.email_confirm,
+			user_metadata: {
+				role: payload.role,
+			},
 		});
 
 		if (error) throw error;

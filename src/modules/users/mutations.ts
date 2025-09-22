@@ -6,9 +6,7 @@ export function useCreateUserMutation() {
 	return useMutation({
 		mutationFn: async (payload: CreateUserSchema) => {
 			const { error } = await supabase.functions.invoke("create-user", {
-				body: {
-					email: payload.email,
-				},
+				body: payload,
 			});
 
 			if (error) throw error;

@@ -9,6 +9,7 @@ export const { useAppForm } = createFormHook({
 	formContext,
 	fieldComponents: {
 		Input: lazy(() => import("@/components/form/input")),
+		Radio: lazy(() => import("@/components/form/radio")),
 	},
 	formComponents: {
 		Button: lazy(() => import("@/components/form/button")),

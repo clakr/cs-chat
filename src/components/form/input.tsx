@@ -1,3 +1,4 @@
+import { useStore } from "@tanstack/react-form";
 import { type ComponentProps, type ReactNode, useId } from "react";
 import { Input as UIInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -5,25 +6,28 @@ import { useFieldContext } from "@/lib/form";
 
 type Props = {
 	label: ReactNode;
+	description?: ReactNode;
 } & ComponentProps<"input">;
 
-export default function Input({ label, ...props }: Props) {
+export default function Input({ label, description, ...props }: Props) {
 	const id = useId();
 	const errorId = `${id}-error`;
 	const field = useFieldContext<string>();
 
-	const hasError =
-		field.state.meta.isTouched &&
-		!field.state.meta.isValid &&
-		field.state.meta.errors.at(0);
-
-	const errorMessage = hasError
-		? field.state.meta.errors.at(0)?.message
-		: undefined;
+	const hasError = useStore(
+		field.store,
+		(state) => state.meta.isTouched && state.meta.errors.length > 0,
+	);
+	const errors = useStore(field.store, (state) => state.meta.errors);
 
 	return (
-		<div className="flex flex-col gap-y-1.5">
-			<Label htmlFor={id}>{label}</Label>
+		<div className="grid gap-y-1.5">
+			<div className="grid gap-y-0.5">
+				<Label htmlFor={id}>{label}</Label>
+				<span className="text-xs italic text-muted-foreground">
+					{description}
+				</span>
+			</div>
 			<UIInput
 				id={id}
 				value={field.state.value}
@@ -40,7 +44,7 @@ export default function Input({ label, ...props }: Props) {
 					aria-live="assertive"
 					className="text-destructive text-xs"
 				>
-					{errorMessage}
+					{errors.at(0).message}
 				</em>
 			) : null}
 		</div>

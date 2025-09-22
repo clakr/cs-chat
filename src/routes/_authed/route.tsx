@@ -10,6 +10,7 @@ import {
 	ChevronsUpDown,
 	LayoutDashboard,
 	LogOut,
+	Plus,
 	User,
 	Users,
 } from "lucide-react";
@@ -43,6 +44,7 @@ import {
 	SidebarHeader,
 	SidebarInset,
 	SidebarMenu,
+	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarProvider,
@@ -57,6 +59,10 @@ import {
 } from "@/modules/profile/components/update-profile-dialog";
 import { useProfile } from "@/modules/profile/hooks/use-profile";
 import { profileQueryOptions } from "@/modules/profile/query-options";
+import {
+	CreateUserDialog,
+	useCreateUserDialog,
+} from "@/modules/users/components/create-user-dialog";
 
 export const Route = createFileRoute("/_authed")({
 	component: RouteComponent,
@@ -80,6 +86,10 @@ export const Route = createFileRoute("/_authed")({
 });
 
 function RouteComponent() {
+	const handleOpenCreateUserDialog = useCreateUserDialog(
+		(state) => state.handleOpen,
+	);
+
 	return (
 		<>
 			<SidebarProvider>
@@ -134,6 +144,10 @@ function RouteComponent() {
 												Users
 											</Link>
 										</SidebarMenuButton>
+										<SidebarMenuAction onClick={handleOpenCreateUserDialog}>
+											<Plus />
+											<span className="sr-only">create user</span>
+										</SidebarMenuAction>
 									</SidebarMenuItem>
 								</SidebarMenu>
 							</SidebarGroupContent>
@@ -151,6 +165,7 @@ function RouteComponent() {
 			</SidebarProvider>
 
 			<UpdateProfileDialog />
+			<CreateUserDialog />
 		</>
 	);
 }

@@ -1,9 +1,12 @@
+CREATE TYPE public.user_roles AS ENUM ('admin', 'organization_manager', 'counselor');
+
 create table "public"."profiles" (
-    "id" uuid not null,
-    "created_at" timestamp with time zone not null default now(),
+    "id" uuid NOT NULL,
+    "created_at" timestamp with time zone NOT NULL default now(),
     "first_name" text,
     "last_name" text,
-    "email" text not null
+    "email" text NOT NULL,
+    "role" public.user_roles NOT NULL
 );
 
 
@@ -24,8 +27,8 @@ CREATE OR REPLACE FUNCTION public.new_user()
  LANGUAGE plpgsql
  SECURITY DEFINER SET search_path = ''
 AS $function$BEGIN
-  INSERT INTO public.profiles (id, email)
-  VALUES (NEW.id, NEW.email);
+  INSERT INTO public.profiles (id, email, role)
+  VALUES (NEW.id, NEW.email, (NEW.raw_user_meta_data ->> 'role')::public.user_roles);
 
   RETURN NEW;
 END;$function$
