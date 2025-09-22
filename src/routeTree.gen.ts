@@ -13,6 +13,8 @@ import { Route as GuestRouteRouteImport } from './routes/_guest/route'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as GuestIndexRouteImport } from './routes/_guest/index'
 import { Route as AuthedARouteRouteImport } from './routes/_authed/a/route'
+import { Route as AuthedAIndexRouteImport } from './routes/_authed/a/index'
+import { Route as AuthedAUsersRouteImport } from './routes/_authed/a/users'
 
 const GuestRouteRoute = GuestRouteRouteImport.update({
   id: '/_guest',
@@ -32,28 +34,50 @@ const AuthedARouteRoute = AuthedARouteRouteImport.update({
   path: '/a',
   getParentRoute: () => AuthedRouteRoute,
 } as any)
+const AuthedAIndexRoute = AuthedAIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthedARouteRoute,
+} as any)
+const AuthedAUsersRoute = AuthedAUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthedARouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/a': typeof AuthedARouteRoute
+  '/a': typeof AuthedARouteRouteWithChildren
   '/': typeof GuestIndexRoute
+  '/a/users': typeof AuthedAUsersRoute
+  '/a/': typeof AuthedAIndexRoute
 }
 export interface FileRoutesByTo {
-  '/a': typeof AuthedARouteRoute
   '/': typeof GuestIndexRoute
+  '/a/users': typeof AuthedAUsersRoute
+  '/a': typeof AuthedAIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authed': typeof AuthedRouteRouteWithChildren
   '/_guest': typeof GuestRouteRouteWithChildren
-  '/_authed/a': typeof AuthedARouteRoute
+  '/_authed/a': typeof AuthedARouteRouteWithChildren
   '/_guest/': typeof GuestIndexRoute
+  '/_authed/a/users': typeof AuthedAUsersRoute
+  '/_authed/a/': typeof AuthedAIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/a' | '/'
+  fullPaths: '/a' | '/' | '/a/users' | '/a/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/a' | '/'
-  id: '__root__' | '/_authed' | '/_guest' | '/_authed/a' | '/_guest/'
+  to: '/' | '/a/users' | '/a'
+  id:
+    | '__root__'
+    | '/_authed'
+    | '/_guest'
+    | '/_authed/a'
+    | '/_guest/'
+    | '/_authed/a/users'
+    | '/_authed/a/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -91,15 +115,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedARouteRouteImport
       parentRoute: typeof AuthedRouteRoute
     }
+    '/_authed/a/': {
+      id: '/_authed/a/'
+      path: '/'
+      fullPath: '/a/'
+      preLoaderRoute: typeof AuthedAIndexRouteImport
+      parentRoute: typeof AuthedARouteRoute
+    }
+    '/_authed/a/users': {
+      id: '/_authed/a/users'
+      path: '/users'
+      fullPath: '/a/users'
+      preLoaderRoute: typeof AuthedAUsersRouteImport
+      parentRoute: typeof AuthedARouteRoute
+    }
   }
 }
 
+interface AuthedARouteRouteChildren {
+  AuthedAUsersRoute: typeof AuthedAUsersRoute
+  AuthedAIndexRoute: typeof AuthedAIndexRoute
+}
+
+const AuthedARouteRouteChildren: AuthedARouteRouteChildren = {
+  AuthedAUsersRoute: AuthedAUsersRoute,
+  AuthedAIndexRoute: AuthedAIndexRoute,
+}
+
+const AuthedARouteRouteWithChildren = AuthedARouteRoute._addFileChildren(
+  AuthedARouteRouteChildren,
+)
+
 interface AuthedRouteRouteChildren {
-  AuthedARouteRoute: typeof AuthedARouteRoute
+  AuthedARouteRoute: typeof AuthedARouteRouteWithChildren
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
-  AuthedARouteRoute: AuthedARouteRoute,
+  AuthedARouteRoute: AuthedARouteRouteWithChildren,
 }
 
 const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(

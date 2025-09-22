@@ -3,6 +3,7 @@ import {
 	Link,
 	Outlet,
 	redirect,
+	useLocation,
 } from "@tanstack/react-router";
 import {
 	ChevronDown,
@@ -10,9 +11,19 @@ import {
 	LayoutDashboard,
 	LogOut,
 	User,
+	Users,
 } from "lucide-react";
+import { Fragment } from "react/jsx-runtime";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -22,6 +33,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import {
 	Sidebar,
 	SidebarContent,
@@ -34,9 +46,11 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarProvider,
+	SidebarTrigger,
 	useSidebar,
 } from "@/components/ui/sidebar";
 import { supabase } from "@/integrations/supabase";
+import { cn } from "@/lib/utils";
 import {
 	UpdateProfileDialog,
 	useUpdateProfileDialog,
@@ -99,9 +113,25 @@ function RouteComponent() {
 								<SidebarMenu>
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild>
-											<Link to="/a" activeProps={{ "data-active": true }}>
+											<Link
+												to="/a"
+												activeOptions={{ exact: true }}
+												activeProps={{ "data-active": true }}
+											>
 												<LayoutDashboard />
 												Dashboard
+											</Link>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton asChild>
+											<Link
+												to="/a/users"
+												activeOptions={{ exact: true }}
+												activeProps={{ "data-active": true }}
+											>
+												<Users />
+												Users
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
@@ -115,6 +145,7 @@ function RouteComponent() {
 					</SidebarFooter>
 				</Sidebar>
 				<SidebarInset>
+					<Header />
 					<Outlet />
 				</SidebarInset>
 			</SidebarProvider>
@@ -210,5 +241,57 @@ function UserSection() {
 				<span className="truncate text-xs">{email}</span>
 			</div>
 		</>
+	);
+}
+
+function Header() {
+	const location = useLocation();
+
+	const pathSegments = location.pathname.split("/").filter(Boolean);
+
+	const breadcrumbs = pathSegments.map((segment, index) => {
+		const path = `/${pathSegments.slice(0, index + 1).join("/")}`;
+
+		return {
+			label: segment,
+			path,
+		};
+	});
+
+	if (breadcrumbs.length === 0) return null;
+
+	return (
+		<header className="border-b flex items-center gap-x-4 p-4">
+			<SidebarTrigger />
+			<Separator
+				orientation="vertical"
+				className="data-[orientation=vertical]:h-4"
+			/>
+			<Breadcrumb>
+				<BreadcrumbList>
+					{breadcrumbs.map((breadcrumb, index) => (
+						<Fragment key={breadcrumb.path}>
+							<BreadcrumbItem
+								className={cn(
+									"capitalize",
+									index !== breadcrumbs.length - 1 && "hidden md:block",
+								)}
+							>
+								{index === breadcrumbs.length - 1 ? (
+									<BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+								) : (
+									<BreadcrumbLink asChild>
+										<Link to={breadcrumb.path}>{breadcrumb.label}</Link>
+									</BreadcrumbLink>
+								)}
+							</BreadcrumbItem>
+							{index < breadcrumbs.length - 1 && (
+								<BreadcrumbSeparator className="hidden md:block" />
+							)}
+						</Fragment>
+					))}
+				</BreadcrumbList>
+			</Breadcrumb>
+		</header>
 	);
 }
