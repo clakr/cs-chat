@@ -8,7 +8,7 @@ export interface BaseDialogStore {
 }
 
 export function createDialogStore<T extends BaseDialogStore = BaseDialogStore>(
-	initializer?: (set: unknown, get: unknown) => Omit<T, keyof BaseDialogStore>,
+	initializer?: (set: any, get: any) => Omit<T, keyof BaseDialogStore>,
 ) {
 	return create<T>(
 		(set, get) =>

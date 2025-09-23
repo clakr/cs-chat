@@ -9,7 +9,7 @@ type Props = {
 	description?: ReactNode;
 } & ComponentProps<"input">;
 
-export default function Input({ label, description, ...props }: Props) {
+export default function Input({ label, description, type, ...props }: Props) {
 	const id = useId();
 	const errorId = `${id}-error`;
 	const field = useFieldContext<string>();
@@ -19,6 +19,20 @@ export default function Input({ label, description, ...props }: Props) {
 		(state) => state.meta.isTouched && state.meta.errors.length > 0,
 	);
 	const errors = useStore(field.store, (state) => state.meta.errors);
+
+	if (type === "hidden")
+		return (
+			<UIInput
+				id={id}
+				value={field.state.value}
+				onBlur={field.handleBlur}
+				onChange={(event) => field.handleChange(event.target.value)}
+				aria-invalid={hasError ? "true" : "false"}
+				aria-describedby={hasError ? errorId : undefined}
+				type={type}
+				{...props}
+			/>
+		);
 
 	return (
 		<div className="grid gap-y-1.5">
@@ -35,6 +49,7 @@ export default function Input({ label, description, ...props }: Props) {
 				onChange={(event) => field.handleChange(event.target.value)}
 				aria-invalid={hasError ? "true" : "false"}
 				aria-describedby={hasError ? errorId : undefined}
+				type={type}
 				{...props}
 			/>
 			{hasError ? (

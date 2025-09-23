@@ -41,6 +41,7 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          role: Database["public"]["Enums"]["user_roles"]
         }
         Insert: {
           created_at?: string
@@ -48,6 +49,7 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          role: Database["public"]["Enums"]["user_roles"]
         }
         Update: {
           created_at?: string
@@ -55,6 +57,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          role?: Database["public"]["Enums"]["user_roles"]
         }
         Relationships: []
       }
@@ -63,10 +66,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: Database["public"]["Enums"]["user_roles"]
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_roles: "admin" | "organization_manager" | "counselor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -196,7 +202,9 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      user_roles: ["admin", "organization_manager", "counselor"],
+    },
   },
 } as const
 

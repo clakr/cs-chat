@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
 import { toast } from "sonner";
+import { useShallow } from "zustand/react/shallow";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
 	Breadcrumb,
@@ -53,16 +54,16 @@ import {
 } from "@/components/ui/sidebar";
 import { supabase } from "@/integrations/supabase";
 import { cn } from "@/lib/utils";
-import {
-	UpdateProfileDialog,
-	useUpdateProfileDialog,
-} from "@/modules/profile/components/update-profile-dialog";
 import { useProfile } from "@/modules/profile/hooks/use-profile";
 import { profileQueryOption } from "@/modules/profile/query-options";
 import {
 	CreateUserDialog,
 	useCreateUserDialog,
 } from "@/modules/users/components/create-user-dialog";
+import {
+	UpdateUserDialog,
+	useUpdateUserDialog,
+} from "@/modules/users/components/update-user-dialog";
 
 export const Route = createFileRoute("/_authed")({
 	component: RouteComponent,
@@ -164,8 +165,8 @@ function RouteComponent() {
 				</SidebarInset>
 			</SidebarProvider>
 
-			<UpdateProfileDialog />
 			<CreateUserDialog />
+			<UpdateUserDialog />
 		</>
 	);
 }
@@ -194,11 +195,24 @@ function UserDropdownMenu() {
 	}
 
 	/**
-	 * update profile dialog
+	 * update user dialog
 	 */
-	const handleOpenUpdateProfileDialog = useUpdateProfileDialog(
-		(state) => state.handleOpen,
+	const updateUserDialogStore = useUpdateUserDialog(
+		useShallow((state) => ({
+			handleOpen: state.handleOpen,
+			setUserId: state.setUserId,
+		})),
 	);
+
+	async function handleOpenUpdateUserDialog() {
+		const session = await supabase.auth.getSession();
+
+		const userId = session.data.session?.user.id;
+		if (!userId) return;
+
+		updateUserDialogStore.setUserId(userId);
+		updateUserDialogStore.handleOpen();
+	}
 
 	return (
 		<SidebarMenu>
@@ -226,7 +240,7 @@ function UserDropdownMenu() {
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem onClick={handleOpenUpdateProfileDialog}>
+							<DropdownMenuItem onClick={handleOpenUpdateUserDialog}>
 								<User />
 								Account
 							</DropdownMenuItem>
