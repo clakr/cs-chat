@@ -15,7 +15,7 @@ export const usersQueryOption = queryOptions({
 
 export function userQueryOption(id: User["id"]) {
 	return queryOptions({
-		queryKey: ["user", id],
+		queryKey: ["users", id],
 		queryFn: async () => {
 			const { error, data } = await supabase
 				.from("profiles")
@@ -29,3 +29,13 @@ export function userQueryOption(id: User["id"]) {
 		},
 	});
 }
+
+export const userIdQueryOption = queryOptions({
+	queryKey: ["userId"],
+	queryFn: async () => {
+		const session = await supabase.auth.getSession();
+		if (!session.data.session) throw new Error("No user session found");
+
+		return session.data.session.user.id;
+	},
+});

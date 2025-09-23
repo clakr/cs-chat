@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	Link,
@@ -54,8 +55,6 @@ import {
 } from "@/components/ui/sidebar";
 import { supabase } from "@/integrations/supabase";
 import { cn } from "@/lib/utils";
-import { useProfile } from "@/modules/profile/hooks/use-profile";
-import { profileQueryOption } from "@/modules/profile/query-options";
 import {
 	CreateUserDialog,
 	useCreateUserDialog,
@@ -64,6 +63,11 @@ import {
 	UpdateUserDialog,
 	useUpdateUserDialog,
 } from "@/modules/users/components/update-user-dialog";
+import { useProfile } from "@/modules/users/hooks/use-profile";
+import {
+	userIdQueryOption,
+	userQueryOption,
+} from "@/modules/users/query-options";
 
 export const Route = createFileRoute("/_authed")({
 	component: RouteComponent,
@@ -82,7 +86,8 @@ export const Route = createFileRoute("/_authed")({
 		}
 	},
 	async loader({ context: { queryClient } }) {
-		await queryClient.ensureQueryData(profileQueryOption);
+		const userId = await queryClient.ensureQueryData(userIdQueryOption);
+		await queryClient.ensureQueryData(userQueryOption(userId));
 	},
 });
 
@@ -197,6 +202,8 @@ function UserDropdownMenu() {
 	/**
 	 * update user dialog
 	 */
+	const { data: userId } = useSuspenseQuery(userIdQueryOption);
+
 	const updateUserDialogStore = useUpdateUserDialog(
 		useShallow((state) => ({
 			handleOpen: state.handleOpen,
@@ -205,11 +212,6 @@ function UserDropdownMenu() {
 	);
 
 	async function handleOpenUpdateUserDialog() {
-		const session = await supabase.auth.getSession();
-
-		const userId = session.data.session?.user.id;
-		if (!userId) return;
-
 		updateUserDialogStore.setUserId(userId);
 		updateUserDialogStore.handleOpen();
 	}
@@ -258,7 +260,10 @@ function UserDropdownMenu() {
 }
 
 function UserSection() {
-	const { avatar, fullName, email } = useProfile();
+	const { data: userId } = useSuspenseQuery(userIdQueryOption);
+	const { data: user } = useSuspenseQuery(userQueryOption(userId));
+
+	const { avatar, fullName, email } = useProfile(user);
 
 	return (
 		<>

@@ -1,5 +1,4 @@
 import { TanstackDevtools } from "@tanstack/react-devtools";
-import { FormDevtools } from "@tanstack/react-form-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
@@ -17,12 +16,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 					}}
 					plugins={[
 						{
-							name: "Tanstack Router",
+							name: "Router",
 							render: <TanStackRouterDevtoolsPanel />,
-						},
-						{
-							name: "Tanstack Form",
-							render: <FormDevtools />,
 						},
 					]}
 				/>
