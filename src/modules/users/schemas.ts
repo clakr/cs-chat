@@ -100,6 +100,7 @@ export const updateUserSchema = z.object({
 				.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
 				.join(" ");
 		}),
+	email: z.email("Please enter a valid email address"),
 });
 
 export type UpdateUserSchema = z.infer<typeof updateUserSchema>;

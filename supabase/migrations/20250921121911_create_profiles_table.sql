@@ -22,17 +22,7 @@ alter table "public"."profiles" validate constraint "profiles_id_fkey";
 
 set check_function_bodies = off;
 
-CREATE OR REPLACE FUNCTION public.new_user()
- RETURNS trigger
- LANGUAGE plpgsql
- SECURITY DEFINER SET search_path = ''
-AS $function$BEGIN
-  INSERT INTO public.profiles (id, email, role)
-  VALUES (NEW.id, NEW.email, (NEW.raw_user_meta_data ->> 'role')::public.user_roles);
 
-  RETURN NEW;
-END;$function$
-;
 
 grant delete on table "public"."profiles" to "anon";
 
@@ -75,6 +65,62 @@ grant trigger on table "public"."profiles" to "service_role";
 grant truncate on table "public"."profiles" to "service_role";
 
 grant update on table "public"."profiles" to "service_role";
+
+CREATE OR REPLACE FUNCTION public.new_user()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER SET search_path = ''
+AS $function$BEGIN
+  INSERT INTO public.profiles (id, email, role)
+  VALUES (NEW.id, NEW.email, (NEW.raw_user_meta_data ->> 'role')::public.user_roles);
+
+  RETURN NEW;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE WARNING 'Error creating profile for user ID %: %', NEW.id, SQLERRM;
+    -- Return NEW to not block the user creation in auth.users
+    RETURN NEW;
+END;$function$;
+
+CREATE TRIGGER on_auth_user_created
+AFTER INSERT ON auth.users
+FOR EACH ROW EXECUTE FUNCTION public.new_user();
+
+CREATE OR REPLACE FUNCTION public.update_user_profile()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER SET search_path = ''
+AS $function$
+DECLARE
+  rows_affected INTEGER;
+BEGIN
+  IF OLD.email IS DISTINCT FROM NEW.email OR 
+     (OLD.raw_user_meta_data ->> 'role') IS DISTINCT FROM (NEW.raw_user_meta_data ->> 'role') THEN
+    
+    UPDATE public.profiles 
+    SET 
+      email = NEW.email,
+      role = (NEW.raw_user_meta_data ->> 'role')::public.user_roles
+    WHERE id = NEW.id;
+    
+    GET DIAGNOSTICS rows_affected = ROW_COUNT;
+    
+    IF rows_affected = 0 THEN
+      RAISE WARNING 'Profile not found for user ID: %', NEW.id;
+    END IF;
+    
+  END IF;
+
+  RETURN NEW;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE WARNING 'Error updating profile for user ID %: %', NEW.id, SQLERRM;
+    RETURN NEW;
+END;$function$;
+
+CREATE TRIGGER on_auth_user_updated
+AFTER UPDATE OF email, raw_user_meta_data ON auth.users
+FOR EACH ROW EXECUTE FUNCTION public.update_user_profile();
 
 CREATE OR REPLACE FUNCTION public.get_current_user_role()
 RETURNS public.user_roles
@@ -129,6 +175,3 @@ CREATE POLICY "profiles_select_policy" ON public.profiles
   );
 
 
-CREATE TRIGGER on_auth_user_created
-AFTER INSERT ON auth.users
-FOR EACH ROW EXECUTE FUNCTION public.new_user();

@@ -34,6 +34,18 @@ export function useUpdateUserMutation() {
 				.eq("id", payload.id);
 
 			if (error) throw error;
+
+			const { error: functionsError } = await supabase.functions.invoke(
+				"edit-user",
+				{
+					body: {
+						id: payload.id,
+						email: payload.email,
+					},
+				},
+			);
+
+			if (functionsError) throw functionsError;
 		},
 		meta: {
 			invalidatesQuery: ["users"],

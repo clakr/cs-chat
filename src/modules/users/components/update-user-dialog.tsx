@@ -66,6 +66,7 @@ export function UpdateUserDialog() {
 		id: "",
 		first_name: "",
 		last_name: "",
+		email: "",
 	};
 
 	const form = useAppForm({
@@ -108,7 +109,7 @@ export function UpdateUserDialog() {
 							<field.Input
 								type="text"
 								autoComplete="given-name"
-								placeholder="Enter your first name"
+								placeholder="Enter first name"
 								label="First Name"
 							/>
 						)}
@@ -118,8 +119,18 @@ export function UpdateUserDialog() {
 							<field.Input
 								type="text"
 								autoComplete="family-name"
-								placeholder="Enter your last name"
+								placeholder="Enter last name"
 								label="Last Name"
+							/>
+						)}
+					</form.AppField>
+					<form.AppField name="email" defaultValue={user.email}>
+						{(field) => (
+							<field.Input
+								type="email"
+								autoComplete="work email"
+								placeholder="Enter email"
+								label="Email Address"
 							/>
 						)}
 					</form.AppField>
