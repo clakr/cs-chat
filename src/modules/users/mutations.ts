@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase";
 import type {
 	CreateUserSchema,
+	DeleteUserSchema,
 	UpdateUserSchema,
 } from "@/modules/users/schemas";
 
@@ -51,6 +52,29 @@ export function useUpdateUserMutation() {
 			invalidatesQuery: ["users"],
 			errorTitle: "Failed to update user",
 			successMessage: "User updated successfully",
+		},
+	});
+}
+
+export function useDeleteUserMutation() {
+	return useMutation({
+		mutationFn: async (payload: DeleteUserSchema) => {
+			const { error, data, response } = await supabase.functions.invoke(
+				"delete-user",
+				{
+					body: payload,
+				},
+			);
+
+			console.log(data);
+			console.log(response);
+
+			if (error) throw error;
+		},
+		meta: {
+			invalidatesQuery: ["users"],
+			errorTitle: "Failed to delete user",
+			successMessage: "User deleted successfully",
 		},
 	});
 }

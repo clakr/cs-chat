@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Edit, EllipsisVertical, Trash } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
@@ -8,8 +9,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAlert } from "@/hooks/use-alert";
 import type { User } from "@/integrations/supabase/types";
 import { useUpdateUserDialog } from "@/modules/users/components/update-user-dialog";
+import { useDeleteUserMutation } from "@/modules/users/mutations";
+import { userIdQueryOption } from "@/modules/users/query-options";
 
 export const columns: ColumnDef<User>[] = [
 	{
@@ -39,6 +43,9 @@ export const columns: ColumnDef<User>[] = [
 		accessorKey: "actions",
 		header: "",
 		cell: ({ row }) => {
+			/**
+			 * update user
+			 */
 			const updateUserDialogStore = useUpdateUserDialog(
 				useShallow((state) => ({
 					handleOpen: state.handleOpen,
@@ -46,10 +53,32 @@ export const columns: ColumnDef<User>[] = [
 				})),
 			);
 
-			function handleOpenUpdateUserDialog() {
+			function handleUpdateUser() {
 				updateUserDialogStore.setUserId(row.original.id);
 				updateUserDialogStore.handleOpen();
 			}
+
+			/**
+			 * delete user
+			 */
+			const { show } = useAlert();
+			const mutation = useDeleteUserMutation();
+
+			function handleDeleteUser() {
+				show({
+					title: "Are you absolutely sure?",
+					description:
+						"This action cannot be undone. This will permanently delete the user and all associated data.",
+					actionText: "Delete this User",
+					onAction: async () => {
+						await mutation.mutateAsync({
+							id: row.original.id,
+						});
+					},
+				});
+			}
+
+			const { data: userId } = useSuspenseQuery(userIdQueryOption);
 
 			return (
 				<DropdownMenu>
@@ -59,14 +88,16 @@ export const columns: ColumnDef<User>[] = [
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuItem onClick={handleOpenUpdateUserDialog}>
+						<DropdownMenuItem onClick={handleUpdateUser}>
 							<Edit />
-							Edit
+							Update
 						</DropdownMenuItem>
-						<DropdownMenuItem disabled>
-							<Trash />
-							Delete
-						</DropdownMenuItem>
+						{userId !== row.original.id ? (
+							<DropdownMenuItem onClick={handleDeleteUser}>
+								<Trash />
+								Delete
+							</DropdownMenuItem>
+						) : null}
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);

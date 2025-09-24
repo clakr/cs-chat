@@ -2,6 +2,7 @@ import { TanstackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { AlertDialog } from "@/components/alert-dialog";
 import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
@@ -23,6 +24,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 				/>
 
 				<Toaster position="top-center" />
+				<AlertDialog />
 			</>
 		),
 	},
