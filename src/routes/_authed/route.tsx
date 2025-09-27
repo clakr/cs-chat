@@ -7,6 +7,7 @@ import {
 	useLocation,
 } from "@tanstack/react-router";
 import {
+	Building,
 	ChevronDown,
 	ChevronsUpDown,
 	LayoutDashboard,
@@ -56,6 +57,10 @@ import {
 import { supabase } from "@/integrations/supabase";
 import { cn } from "@/lib/utils";
 import {
+	CreateOrganizationDialog,
+	useCreateOrganizationDialog,
+} from "@/modules/organizations/components/create-organization-dialog";
+import {
 	CreateUserDialog,
 	useCreateUserDialog,
 } from "@/modules/users/components/create-user-dialog";
@@ -93,6 +98,10 @@ export const Route = createFileRoute("/_authed")({
 
 function RouteComponent() {
 	const handleOpenCreateUserDialog = useCreateUserDialog(
+		(state) => state.handleOpen,
+	);
+
+	const handleOpenCreateOrganizationDialog = useCreateOrganizationDialog(
 		(state) => state.handleOpen,
 	);
 
@@ -155,6 +164,24 @@ function RouteComponent() {
 											<span className="sr-only">create user</span>
 										</SidebarMenuAction>
 									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton asChild>
+											<Link
+												to="/a/organizations"
+												activeOptions={{ exact: true }}
+												activeProps={{ "data-active": true }}
+											>
+												<Building />
+												Organizations
+											</Link>
+										</SidebarMenuButton>
+										<SidebarMenuAction
+											onClick={handleOpenCreateOrganizationDialog}
+										>
+											<Plus />
+											<span className="sr-only">create organization</span>
+										</SidebarMenuAction>
+									</SidebarMenuItem>
 								</SidebarMenu>
 							</SidebarGroupContent>
 						</SidebarGroup>
@@ -172,6 +199,7 @@ function RouteComponent() {
 
 			<CreateUserDialog />
 			<UpdateUserDialog />
+			<CreateOrganizationDialog />
 		</>
 	);
 }
