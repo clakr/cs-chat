@@ -59,3 +59,11 @@ CREATE POLICY "organizations_insert_policy" ON public.organizations
   WITH CHECK (
     public.get_current_user_role() = 'admin'
   );
+
+CREATE POLICY "organizations_select_policy" ON public.organizations
+  AS PERMISSIVE FOR SELECT
+  TO authenticated
+  USING (
+    public.get_current_user_role() = 'admin'
+  );
+

@@ -85,6 +85,7 @@ export const columns: ColumnDef<User>[] = [
 					<DropdownMenuTrigger asChild>
 						<Button variant="ghost" size="icon">
 							<EllipsisVertical />
+							<span className="sr-only">open user actions</span>
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
