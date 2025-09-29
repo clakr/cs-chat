@@ -88,10 +88,8 @@ export function UpdateUserDialog() {
 		<Dialog open={isOpen} onOpenChange={handleToggle}>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Edit profile</DialogTitle>
-					<DialogDescription>
-						Make changes to your profile here.
-					</DialogDescription>
+					<DialogTitle>Edit user</DialogTitle>
+					<DialogDescription>{/* todo: add description */}</DialogDescription>
 				</DialogHeader>
 				<form
 					className="gap-y-3 flex flex-col"

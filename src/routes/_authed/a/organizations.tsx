@@ -7,6 +7,7 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { columns } from "@/modules/organizations/components/columns";
 import { useCreateOrganizationDialog } from "@/modules/organizations/components/create-organization-dialog";
+import { UpdateOrganizationDialog } from "@/modules/organizations/components/update-organization-dialog";
 import { organizationsQueryOption } from "@/modules/organizations/query-options";
 
 export const Route = createFileRoute("/_authed/a/organizations")({
@@ -24,14 +25,18 @@ function RouteComponent() {
 	const { data: organizations } = useSuspenseQuery(organizationsQueryOption);
 
 	return (
-		<Container>
-			<Header heading="Organizations">
-				<Button onClick={handleOpenCreateOrganizationDialog}>
-					<Plus />
-					Create Organization
-				</Button>
-			</Header>
-			<DataTable columns={columns} data={organizations} />
-		</Container>
+		<>
+			<Container>
+				<Header heading="Organizations">
+					<Button onClick={handleOpenCreateOrganizationDialog}>
+						<Plus />
+						Create Organization
+					</Button>
+				</Header>
+				<DataTable columns={columns} data={organizations} />
+			</Container>
+
+			<UpdateOrganizationDialog />
+		</>
 	);
 }

@@ -1,5 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Edit, EllipsisVertical, Trash } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -8,6 +9,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Organization } from "@/integrations/supabase/types";
+import { useUpdateOrganizationDialog } from "@/modules/organizations/components/update-organization-dialog";
 
 export const columns: ColumnDef<Organization>[] = [
 	{
@@ -21,7 +23,19 @@ export const columns: ColumnDef<Organization>[] = [
 	{
 		accessorKey: "actions",
 		header: "",
-		cell: () => {
+		cell: ({ row }) => {
+			const updateOrganizationDialog = useUpdateOrganizationDialog(
+				useShallow((state) => ({
+					handleOpen: state.handleOpen,
+					setOrganizationId: state.setOrganizationId,
+				})),
+			);
+
+			function handleUpdateOrganization() {
+				updateOrganizationDialog.setOrganizationId(row.original.id);
+				updateOrganizationDialog.handleOpen();
+			}
+
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -31,7 +45,7 @@ export const columns: ColumnDef<Organization>[] = [
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuItem disabled>
+						<DropdownMenuItem onClick={handleUpdateOrganization}>
 							<Edit />
 							Update
 						</DropdownMenuItem>
