@@ -16,13 +16,14 @@ interface AlertState {
 	description: string;
 	actionText: string;
 	cancelText?: string;
-	onAction?: () => void;
-	onCancel?: () => void;
+	resolver: ((value: boolean) => void) | null;
 }
 
 interface AlertStore extends AlertState {
-	show: (options: Omit<AlertState, "isOpen">) => void;
+	show: (options: Omit<AlertState, "isOpen" | "resolver">) => Promise<boolean>;
 	hide: () => void;
+	confirm: () => void;
+	cancel: () => void;
 }
 
 const USE_ALERT_STORE_DEFAULT_STATE: AlertState = {
@@ -31,26 +32,46 @@ const USE_ALERT_STORE_DEFAULT_STATE: AlertState = {
 	description: "",
 	actionText: "Continue",
 	cancelText: "Cancel",
-	onAction: undefined,
-	onCancel: undefined,
+	resolver: null,
 };
 
-export const useAlertStore = create<AlertStore>((set) => ({
+export const useAlertStore = create<AlertStore>((set, get) => ({
 	...USE_ALERT_STORE_DEFAULT_STATE,
-	show: (options) =>
-		set({
-			isOpen: true,
-			title: options.title,
-			description: options.description,
-			actionText: options.actionText,
-			cancelText: options.cancelText || "Cancel",
-			onAction: options.onAction,
-			onCancel: options.onCancel,
-		}),
-	hide: () =>
+	show: (options) => {
+		return new Promise<boolean>((resolve) => {
+			set({
+				isOpen: true,
+				title: options.title,
+				description: options.description,
+				actionText: options.actionText || "Continue",
+				cancelText: options.cancelText || "Cancel",
+				resolver: resolve,
+			});
+		});
+	},
+	hide: () => {
 		set({
 			...USE_ALERT_STORE_DEFAULT_STATE,
-		}),
+		});
+	},
+	confirm: () => {
+		const { resolver, hide } = get();
+
+		if (resolver) {
+			resolver(true);
+		}
+
+		hide();
+	},
+	cancel: () => {
+		const { resolver, hide } = get();
+
+		if (resolver) {
+			resolver(false);
+		}
+
+		hide();
+	},
 }));
 
 export function AlertDialog() {
@@ -60,35 +81,26 @@ export function AlertDialog() {
 		description,
 		actionText,
 		cancelText,
-		onAction,
-		onCancel,
-		hide,
+		confirm,
+		cancel,
 	} = useAlertStore();
 
-	function handleAction() {
-		onAction?.();
-		hide();
-	}
-
-	function handleCancel() {
-		onCancel?.();
-		hide();
+	function handleOpenChange(open: boolean) {
+		if (!open) {
+			cancel();
+		}
 	}
 
 	return (
-		<UIAlertDialog open={isOpen} onOpenChange={(open) => !open && hide()}>
+		<UIAlertDialog open={isOpen} onOpenChange={handleOpenChange}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>{title}</AlertDialogTitle>
 					<AlertDialogDescription>{description}</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel onClick={handleCancel}>
-						{cancelText}
-					</AlertDialogCancel>
-					<AlertDialogAction onClick={handleAction}>
-						{actionText}
-					</AlertDialogAction>
+					<AlertDialogCancel onClick={cancel}>{cancelText}</AlertDialogCancel>
+					<AlertDialogAction onClick={confirm}>{actionText}</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</UIAlertDialog>

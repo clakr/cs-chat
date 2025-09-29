@@ -47,17 +47,18 @@ export const columns: ColumnDef<Organization>[] = [
 			const { show } = useAlert();
 			const mutation = useDeleteOrganizationMutation();
 
-			function handleDeleteOrganization() {
-				show({
+			async function handleDeleteOrganization() {
+				const isConfirmed = await show({
 					title: "Are you absolutely sure?",
 					description:
 						"This action cannot be undone. This will delete the organization and all associated data.",
 					actionText: "Delete this Organization",
-					onAction: async () => {
-						await mutation.mutateAsync({
-							id: row.original.id,
-						});
-					},
+				});
+
+				if (!isConfirmed) return;
+
+				mutation.mutateAsync({
+					id: row.original.id,
 				});
 			}
 

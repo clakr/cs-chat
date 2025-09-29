@@ -64,17 +64,18 @@ export const columns: ColumnDef<User>[] = [
 			const { show } = useAlert();
 			const mutation = useDeleteUserMutation();
 
-			function handleDeleteUser() {
-				show({
+			async function handleDeleteUser() {
+				const isConfirmed = await show({
 					title: "Are you absolutely sure?",
 					description:
 						"This action cannot be undone. This will permanently delete the user and all associated data.",
 					actionText: "Delete this User",
-					onAction: async () => {
-						await mutation.mutateAsync({
-							id: row.original.id,
-						});
-					},
+				});
+
+				if (!isConfirmed) return;
+
+				mutation.mutateAsync({
+					id: row.original.id,
 				});
 			}
 
