@@ -11,3 +11,9 @@ export const updateOrganizationSchema = createOrganizationSchema.extend({
 });
 
 export type UpdateOrganizationSchema = z.infer<typeof updateOrganizationSchema>;
+
+export const deleteOrganizationSchema = updateOrganizationSchema.pick({
+	id: true,
+});
+
+export type DeleteOrganizationSchema = z.infer<typeof deleteOrganizationSchema>;

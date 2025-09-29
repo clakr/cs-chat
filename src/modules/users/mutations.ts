@@ -59,15 +59,9 @@ export function useUpdateUserMutation() {
 export function useDeleteUserMutation() {
 	return useMutation({
 		mutationFn: async (payload: DeleteUserSchema) => {
-			const { error, data, response } = await supabase.functions.invoke(
-				"delete-user",
-				{
-					body: payload,
-				},
-			);
-
-			console.log(data);
-			console.log(response);
+			const { error } = await supabase.functions.invoke("delete-user", {
+				body: payload,
+			});
 
 			if (error) throw error;
 		},

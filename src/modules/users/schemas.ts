@@ -37,7 +37,7 @@ export const createUserSchema = z.object({
 export type CreateUserSchema = z.infer<typeof createUserSchema>;
 
 export const updateUserSchema = z.object({
-	id: z.uuid(),
+	id: z.uuid("Invalid User ID"),
 	first_name: z
 		.string()
 		.transform((val) => val.trim())
@@ -105,8 +105,8 @@ export const updateUserSchema = z.object({
 
 export type UpdateUserSchema = z.infer<typeof updateUserSchema>;
 
-export const deleteUserSchema = z.object({
-	id: z.uuid(),
+export const deleteUserSchema = updateUserSchema.pick({
+	id: true,
 });
 
 export type DeleteUserSchema = z.infer<typeof deleteUserSchema>;

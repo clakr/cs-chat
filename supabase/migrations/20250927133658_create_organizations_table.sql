@@ -1,10 +1,7 @@
-CREATE TYPE public.organization_status AS ENUM ('active', 'archived');
-
 create table "public"."organizations" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
-    "name" text not null,
-    "status" public.organization_status NOT NULL DEFAULT 'active'::public.organization_status
+    "name" text not null
 );
 
 
@@ -77,5 +74,12 @@ CREATE POLICY "organizations_update_policy" ON public.organizations
     public.get_current_user_role() = 'admin'
   )
   WITH CHECK (
+    public.get_current_user_role() = 'admin'
+  );
+
+CREATE POLICY "organizations_delete_policy" ON public.organizations
+  AS PERMISSIVE FOR DELETE
+  TO authenticated
+  USING (
     public.get_current_user_role() = 'admin'
   );

@@ -8,8 +8,10 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAlert } from "@/hooks/use-alert";
 import type { Organization } from "@/integrations/supabase/types";
 import { useUpdateOrganizationDialog } from "@/modules/organizations/components/update-organization-dialog";
+import { useDeleteOrganizationMutation } from "@/modules/organizations/mutations";
 
 export const columns: ColumnDef<Organization>[] = [
 	{
@@ -24,6 +26,9 @@ export const columns: ColumnDef<Organization>[] = [
 		accessorKey: "actions",
 		header: "",
 		cell: ({ row }) => {
+			/**
+			 * update organization
+			 */
 			const updateOrganizationDialog = useUpdateOrganizationDialog(
 				useShallow((state) => ({
 					handleOpen: state.handleOpen,
@@ -34,6 +39,26 @@ export const columns: ColumnDef<Organization>[] = [
 			function handleUpdateOrganization() {
 				updateOrganizationDialog.setOrganizationId(row.original.id);
 				updateOrganizationDialog.handleOpen();
+			}
+
+			/**
+			 * delete organization
+			 */
+			const { show } = useAlert();
+			const mutation = useDeleteOrganizationMutation();
+
+			function handleDeleteOrganization() {
+				show({
+					title: "Are you absolutely sure?",
+					description:
+						"This action cannot be undone. This will delete the organization and all associated data.",
+					actionText: "Delete this Organization",
+					onAction: async () => {
+						await mutation.mutateAsync({
+							id: row.original.id,
+						});
+					},
+				});
 			}
 
 			return (
@@ -49,7 +74,7 @@ export const columns: ColumnDef<Organization>[] = [
 							<Edit />
 							Update
 						</DropdownMenuItem>
-						<DropdownMenuItem disabled>
+						<DropdownMenuItem onClick={handleDeleteOrganization}>
 							<Trash />
 							Delete
 						</DropdownMenuItem>
