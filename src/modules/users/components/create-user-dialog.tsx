@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useShallow } from "zustand/react/shallow";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useAppForm } from "@/lib/form";
+import { organizationsQueryOption } from "@/modules/organizations/query-options";
 import { useCreateUserMutation } from "@/modules/users/mutations";
 import {
 	type CreateUserSchema,
@@ -32,9 +34,12 @@ export function CreateUserDialog() {
 	/**
 	 * form
 	 */
+	const { data: organizations } = useSuspenseQuery(organizationsQueryOption);
+
 	const mutation = useCreateUserMutation();
 
 	const defaultValues: CreateUserSchema = {
+		organization_id: "",
 		email: "",
 		password: "",
 		email_confirm: false,
@@ -116,6 +121,24 @@ export function CreateUserDialog() {
 							/>
 						)}
 					</form.AppField>
+					<form.Subscribe selector={(state) => state.values.role}>
+						{(role) =>
+							role !== "admin" ? (
+								<form.AppField name="organization_id">
+									{(field) => (
+										<field.Select
+											label="Organization"
+											options={organizations.map((organization) => ({
+												label: organization.name,
+												value: organization.id,
+											}))}
+											placeholder="Select Organization..."
+										/>
+									)}
+								</form.AppField>
+							) : null
+						}
+					</form.Subscribe>
 					<form.AppField name="email_confirm">
 						{(field) => (
 							<Label className="flex items-start border rounded-md p-4 hover:bg-primary/5 has-[[aria-checked=true]]:bg-primary/10 has-[[aria-checked=true]]:border-primary gap-x-3">

@@ -6,33 +6,55 @@ export const userRolesSchema = z.enum([
 	"counselor",
 ]);
 
-export const createUserSchema = z.object({
-	email: z.email("Please enter a valid email address"),
-	password: z
-		.string()
-		.transform((val) => val.trim())
-		.refine((val) => val === "" || val.length >= 8, {
-			message: "Password must be at least 8 characters long",
-		})
-		.refine((val) => val === "" || /[A-Z]/.test(val), {
-			message: "Password must contain at least one uppercase letter",
-		})
-		.refine((val) => val === "" || /[a-z]/.test(val), {
-			message: "Password must contain at least one lowercase letter",
-		})
-		.refine((val) => val === "" || /\d/.test(val), {
-			message: "Password must contain at least one number",
-		})
-		.refine(
-			(val) => val === "" || /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(val),
-			{
-				message: "Password must contain at least one special character",
-			},
-		)
-		.transform((val) => (val === "" ? "password" : val)),
-	email_confirm: z.boolean(),
-	role: userRolesSchema,
-});
+export const createUserSchema = z
+	.object({
+		email: z.email("Please enter a valid email address"),
+		password: z
+			.string()
+			.transform((value) => value.trim())
+			.refine((value) => value === "" || value.length >= 8, {
+				error: "Password must be at least 8 characters long",
+			})
+			.refine((value) => value === "" || /[A-Z]/.test(value), {
+				error: "Password must contain at least one uppercase letter",
+			})
+			.refine((value) => value === "" || /[a-z]/.test(value), {
+				error: "Password must contain at least one lowercase letter",
+			})
+			.refine((value) => value === "" || /\d/.test(value), {
+				error: "Password must contain at least one number",
+			})
+			.refine(
+				(value) =>
+					value === "" || /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value),
+				{
+					error: "Password must contain at least one special character",
+				},
+			)
+			.transform((value) => (value === "" ? "password" : value)),
+		email_confirm: z.boolean(),
+		role: userRolesSchema,
+		organization_id: z.union([
+			z.uuid("Invalid Organization ID"),
+			z.literal(""),
+		]),
+	})
+	.transform((value) => ({
+		...value,
+		organization_id: value.role === "admin" ? "" : value.organization_id,
+	}))
+	.refine(
+		(value) => {
+			if (value.role !== "admin" && !value.organization_id) return false;
+
+			return true;
+		},
+		{
+			error:
+				"Organization ID is required for Organization Managers and Counselors roles",
+			path: ["organization_id"],
+		},
+	);
 
 export type CreateUserSchema = z.infer<typeof createUserSchema>;
 
@@ -42,23 +64,23 @@ export const updateUserSchema = z.object({
 		.string()
 		.transform((val) => val.trim())
 		.refine((val) => val === "" || val.length >= 2, {
-			message: "First name must be at least 2 characters long",
+			error: "First name must be at least 2 characters long",
 		})
 		.refine((val) => val === "" || val.length <= 50, {
-			message: "First name must not exceed 50 characters",
+			error: "First name must not exceed 50 characters",
 		})
 		.refine((val) => val === "" || /^[a-zA-Z\s'-]+$/.test(val), {
-			message:
+			error:
 				"First name can only contain letters, spaces, hyphens, and apostrophes",
 		})
 		.refine((val) => val === "" || val.length > 0, {
-			message: "Name cannot be only whitespace",
+			error: "Name cannot be only whitespace",
 		})
 		.refine((val) => val === "" || !/[\s'-]{2,}/.test(val), {
-			message: "First name cannot contain consecutive special characters",
+			error: "First name cannot contain consecutive special characters",
 		})
 		.refine((val) => val === "" || !/^[\s'-]|[\s'-]$/.test(val), {
-			message:
+			error:
 				"First name cannot start or end with spaces, hyphens, or apostrophes",
 		})
 		.transform((val) => {
@@ -73,23 +95,23 @@ export const updateUserSchema = z.object({
 		.string()
 		.transform((val) => val.trim())
 		.refine((val) => val === "" || val.length >= 2, {
-			message: "Last name must be at least 2 characters long",
+			error: "Last name must be at least 2 characters long",
 		})
 		.refine((val) => val === "" || val.length <= 50, {
-			message: "Last name must not exceed 50 characters",
+			error: "Last name must not exceed 50 characters",
 		})
 		.refine((val) => val === "" || /^[a-zA-Z\s'-]+$/.test(val), {
-			message:
+			error:
 				"Last name can only contain letters, spaces, hyphens, and apostrophes",
 		})
 		.refine((val) => val === "" || val.length > 0, {
-			message: "Name cannot be only whitespace",
+			error: "Name cannot be only whitespace",
 		})
 		.refine((val) => val === "" || !/[\s'-]{2,}/.test(val), {
-			message: "Last name cannot contain consecutive special characters",
+			error: "Last name cannot contain consecutive special characters",
 		})
 		.refine((val) => val === "" || !/^[\s'-]|[\s'-]$/.test(val), {
-			message:
+			error:
 				"Last name cannot start or end with spaces, hyphens, or apostrophes",
 		})
 		.transform((val) => {

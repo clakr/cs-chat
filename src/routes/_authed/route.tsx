@@ -46,6 +46,7 @@ import {
 	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
+	SidebarGroupLabel,
 	SidebarHeader,
 	SidebarInset,
 	SidebarMenu,
@@ -125,6 +126,7 @@ function RouteComponent() {
 
 					<SidebarContent>
 						<SidebarGroup>
+							<SidebarGroupLabel>Admin</SidebarGroupLabel>
 							<SidebarGroupContent>
 								<SidebarMenu>
 									<SidebarMenuItem>
@@ -135,7 +137,7 @@ function RouteComponent() {
 												activeProps={{ "data-active": true }}
 											>
 												<LayoutDashboard />
-												Admin Dashboard
+												Dashboard
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
@@ -175,6 +177,12 @@ function RouteComponent() {
 									</SidebarMenuItem>
 								</SidebarMenu>
 							</SidebarGroupContent>
+						</SidebarGroup>
+						<SidebarGroup>
+							<SidebarGroupLabel>Organization Manager</SidebarGroupLabel>
+						</SidebarGroup>
+						<SidebarGroup>
+							<SidebarGroupLabel>Counselor</SidebarGroupLabel>
 						</SidebarGroup>
 					</SidebarContent>
 

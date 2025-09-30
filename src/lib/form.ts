@@ -1,5 +1,8 @@
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
-import { lazy } from "react";
+import Button from "@/components/form/button";
+import Input from "@/components/form/input";
+import Radio from "@/components/form/radio";
+import Select from "@/components/form/select";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
 	createFormHookContexts();
@@ -8,10 +11,11 @@ export const { useAppForm } = createFormHook({
 	fieldContext,
 	formContext,
 	fieldComponents: {
-		Input: lazy(() => import("@/components/form/input")),
-		Radio: lazy(() => import("@/components/form/radio")),
+		Input,
+		Radio,
+		Select,
 	},
 	formComponents: {
-		Button: lazy(() => import("@/components/form/button")),
+		Button,
 	},
 });

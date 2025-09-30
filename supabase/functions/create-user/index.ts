@@ -25,6 +25,7 @@ serve(async (req) => {
 			email_confirm: payload.email_confirm,
 			user_metadata: {
 				role: payload.role,
+				organization_id: payload.organization_id,
 			},
 		});
 

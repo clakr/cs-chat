@@ -27,7 +27,7 @@ INSERT INTO auth.users (
   '',
   '',
   json_build_object('provider', 'email', 'providers', json_array('email')),
-  json_build_object('email_verified', true, 'role', 'admin'),
+  json_build_object('email_verified', true, 'role', 'admin', 'organization_id', ''),
   current_timestamp,
   current_timestamp
 );

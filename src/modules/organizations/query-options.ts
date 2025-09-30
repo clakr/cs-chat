@@ -7,6 +7,8 @@ export const organizationsQueryOption = queryOptions({
 	queryFn: async () => {
 		const { error, data } = await supabase.from("organizations").select();
 
+		console.log(error);
+
 		if (error) throw error;
 
 		return data;

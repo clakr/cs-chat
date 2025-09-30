@@ -59,6 +59,7 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          organization_id: string | null
           role: Database["public"]["Enums"]["user_roles"]
         }
         Insert: {
@@ -67,6 +68,7 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          organization_id?: string | null
           role: Database["public"]["Enums"]["user_roles"]
         }
         Update: {
@@ -75,9 +77,18 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          organization_id?: string | null
           role?: Database["public"]["Enums"]["user_roles"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
