@@ -34,6 +34,8 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -55,24 +57,27 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 import { supabase } from "@/integrations/supabase";
+import type { Organization } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
 import {
 	CreateOrganizationDialog,
 	useCreateOrganizationDialog,
 } from "@/modules/organizations/components/create-organization-dialog";
+import { organizationsQueryOption } from "@/modules/organizations/query-options";
 import {
 	CreateUserDialog,
 	useCreateUserDialog,
 } from "@/modules/users/components/create-user-dialog";
 import {
 	UpdateUserDialog,
-	useUpdateUserDialog,
+	useUpdateUserDialogStore,
 } from "@/modules/users/components/update-user-dialog";
 import { useProfile } from "@/modules/users/hooks/use-profile";
 import {
 	userIdQueryOption,
 	userQueryOption,
 } from "@/modules/users/query-options";
+import { useOrganizationStore } from "@/stores/organization-store";
 
 export const Route = createFileRoute("/_authed")({
 	component: RouteComponent,
@@ -93,6 +98,7 @@ export const Route = createFileRoute("/_authed")({
 	async loader({ context: { queryClient } }) {
 		const userId = await queryClient.ensureQueryData(userIdQueryOption);
 		await queryClient.ensureQueryData(userQueryOption(userId));
+		await queryClient.ensureQueryData(organizationsQueryOption);
 	},
 });
 
@@ -112,22 +118,7 @@ function RouteComponent() {
 					<SidebarHeader>
 						<SidebarMenu>
 							<SidebarMenuItem>
-								<DropdownMenu>
-									<DropdownMenuTrigger asChild>
-										<SidebarMenuButton>
-											Select Workspace
-											<ChevronDown className="ml-auto" />
-										</SidebarMenuButton>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										<DropdownMenuItem>
-											<span>Acme Inc</span>
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<span>Acme Corp.</span>
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
+								<OrganizationDropdownMenu />
 							</SidebarMenuItem>
 						</SidebarMenu>
 					</SidebarHeader>
@@ -232,7 +223,7 @@ function UserDropdownMenu() {
 	 */
 	const { data: userId } = useSuspenseQuery(userIdQueryOption);
 
-	const updateUserDialogStore = useUpdateUserDialog(
+	const updateUserDialogStore = useUpdateUserDialogStore(
 		useShallow((state) => ({
 			handleOpen: state.handleOpen,
 			setUserId: state.setUserId,
@@ -355,5 +346,41 @@ function Header() {
 				</BreadcrumbList>
 			</Breadcrumb>
 		</header>
+	);
+}
+
+function OrganizationDropdownMenu() {
+	const { data: organizations } = useSuspenseQuery(organizationsQueryOption);
+
+	const { organization, setOrganization } = useOrganizationStore();
+
+	function handleSetOrganization(id: Organization["id"]) {
+		const organization = organizations.find((o) => o.id === id);
+		if (!organization) return;
+
+		setOrganization(organization);
+	}
+
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<SidebarMenuButton>
+					{organization ? organization.name : "Select Organization"}
+					<ChevronDown className="ml-auto" />
+				</SidebarMenuButton>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				<DropdownMenuRadioGroup
+					value={organization?.id}
+					onValueChange={handleSetOrganization}
+				>
+					{organizations.map((o) => (
+						<DropdownMenuRadioItem key={o.id} value={o.id}>
+							<span>{o.name}</span>
+						</DropdownMenuRadioItem>
+					))}
+				</DropdownMenuRadioGroup>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }

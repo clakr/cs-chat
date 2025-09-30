@@ -25,18 +25,17 @@ interface UpdateUserDialogStore extends BaseDialogStore {
 	setUserId: (userId: User["id"] | null) => void;
 }
 
-export const useUpdateUserDialog = createDialogStore<UpdateUserDialogStore>(
-	(set) => ({
+export const useUpdateUserDialogStore =
+	createDialogStore<UpdateUserDialogStore>((set) => ({
 		userId: null,
 		setUserId: (id) => set({ userId: id }),
-	}),
-);
+	}));
 
 export function UpdateUserDialog() {
 	/**
 	 * dialog
 	 */
-	const { isOpen, handleToggle, userId } = useUpdateUserDialog(
+	const { isOpen, handleToggle, userId } = useUpdateUserDialogStore(
 		useShallow((state) => ({
 			isOpen: state.isOpen,
 			handleToggle: state.handleToggle,

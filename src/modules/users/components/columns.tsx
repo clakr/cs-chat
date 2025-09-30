@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAlert } from "@/hooks/use-alert";
 import type { User } from "@/integrations/supabase/types";
-import { useUpdateUserDialog } from "@/modules/users/components/update-user-dialog";
+import { useUpdateUserDialogStore } from "@/modules/users/components/update-user-dialog";
 import { useDeleteUserMutation } from "@/modules/users/mutations";
 import { userIdQueryOption } from "@/modules/users/query-options";
 
@@ -46,7 +46,7 @@ export const columns: ColumnDef<User>[] = [
 			/**
 			 * update user
 			 */
-			const updateUserDialogStore = useUpdateUserDialog(
+			const updateUserDialogStore = useUpdateUserDialogStore(
 				useShallow((state) => ({
 					handleOpen: state.handleOpen,
 					setUserId: state.setUserId,
