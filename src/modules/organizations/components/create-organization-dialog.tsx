@@ -12,15 +12,15 @@ import {
 	type CreateOrganizationSchema,
 	createOrganizationSchema,
 } from "@/modules/organizations/schemas";
-import { createDialogStore } from "@/stores/create-dialog-stores";
+import { createDialogStore } from "@/stores/create-dialog-store";
 
-export const useCreateOrganizationDialog = createDialogStore();
+export const useCreateOrganizationDialogStore = createDialogStore();
 
 export function CreateOrganizationDialog() {
 	/**
 	 * dialog
 	 */
-	const { isOpen, handleToggle } = useCreateOrganizationDialog(
+	const { isOpen, handleToggle } = useCreateOrganizationDialogStore(
 		useShallow((state) => ({
 			isOpen: state.isOpen,
 			handleToggle: state.handleToggle,

@@ -18,14 +18,14 @@ import {
 import {
 	type BaseDialogStore,
 	createDialogStore,
-} from "@/stores/create-dialog-stores";
+} from "@/stores/create-dialog-store";
 
 interface UpdateOrganizationDialogStore extends BaseDialogStore {
 	organizationId: Organization["id"] | null;
 	setOrganizationId: (userId: Organization["id"] | null) => void;
 }
 
-export const useUpdateOrganizationDialog =
+export const useUpdateOrganizationDialogStore =
 	createDialogStore<UpdateOrganizationDialogStore>((set) => ({
 		organizationId: null,
 		setOrganizationId: (id) => set({ organizationId: id }),
@@ -35,13 +35,14 @@ export function UpdateOrganizationDialog() {
 	/**
 	 * dialog
 	 */
-	const { isOpen, handleToggle, organizationId } = useUpdateOrganizationDialog(
-		useShallow((state) => ({
-			isOpen: state.isOpen,
-			handleToggle: state.handleToggle,
-			organizationId: state.organizationId,
-		})),
-	);
+	const { isOpen, handleToggle, organizationId } =
+		useUpdateOrganizationDialogStore(
+			useShallow((state) => ({
+				isOpen: state.isOpen,
+				handleToggle: state.handleToggle,
+				organizationId: state.organizationId,
+			})),
+		);
 
 	/**
 	 * data

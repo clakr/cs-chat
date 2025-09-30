@@ -6,7 +6,7 @@ import { DataTable } from "@/components/data-table";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { columns } from "@/modules/users/components/columns";
-import { useCreateUserDialog } from "@/modules/users/components/create-user-dialog";
+import { useCreateUserDialogStore } from "@/modules/users/components/create-user-dialog";
 import { usersQueryOption } from "@/modules/users/query-options";
 
 export const Route = createFileRoute("/_authed/a/users")({
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authed/a/users")({
 });
 
 function RouteComponent() {
-	const handleOpenCreateUserDialog = useCreateUserDialog(
+	const handleOpenCreateUserDialog = useCreateUserDialogStore(
 		(state) => state.handleOpen,
 	);
 

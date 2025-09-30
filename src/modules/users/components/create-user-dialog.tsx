@@ -14,15 +14,15 @@ import {
 	type CreateUserSchema,
 	createUserSchema,
 } from "@/modules/users/schemas";
-import { createDialogStore } from "@/stores/create-dialog-stores";
+import { createDialogStore } from "@/stores/create-dialog-store";
 
-export const useCreateUserDialog = createDialogStore();
+export const useCreateUserDialogStore = createDialogStore();
 
 export function CreateUserDialog() {
 	/**
 	 * dialog
 	 */
-	const { isOpen, handleToggle } = useCreateUserDialog(
+	const { isOpen, handleToggle } = useCreateUserDialogStore(
 		useShallow((state) => ({
 			isOpen: state.isOpen,
 			handleToggle: state.handleToggle,

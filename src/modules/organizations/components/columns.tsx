@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAlert } from "@/hooks/use-alert";
 import type { Organization } from "@/integrations/supabase/types";
-import { useUpdateOrganizationDialog } from "@/modules/organizations/components/update-organization-dialog";
+import { useUpdateOrganizationDialogStore } from "@/modules/organizations/components/update-organization-dialog";
 import { useDeleteOrganizationMutation } from "@/modules/organizations/mutations";
 
 export const columns: ColumnDef<Organization>[] = [
@@ -29,7 +29,7 @@ export const columns: ColumnDef<Organization>[] = [
 			/**
 			 * update organization
 			 */
-			const updateOrganizationDialog = useUpdateOrganizationDialog(
+			const updateOrganizationDialog = useUpdateOrganizationDialogStore(
 				useShallow((state) => ({
 					handleOpen: state.handleOpen,
 					setOrganizationId: state.setOrganizationId,

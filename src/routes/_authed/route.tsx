@@ -61,12 +61,12 @@ import type { Organization } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
 import {
 	CreateOrganizationDialog,
-	useCreateOrganizationDialog,
+	useCreateOrganizationDialogStore,
 } from "@/modules/organizations/components/create-organization-dialog";
 import { organizationsQueryOption } from "@/modules/organizations/query-options";
 import {
 	CreateUserDialog,
-	useCreateUserDialog,
+	useCreateUserDialogStore,
 } from "@/modules/users/components/create-user-dialog";
 import {
 	UpdateUserDialog,
@@ -103,11 +103,11 @@ export const Route = createFileRoute("/_authed")({
 });
 
 function RouteComponent() {
-	const handleOpenCreateUserDialog = useCreateUserDialog(
+	const handleOpenCreateUserDialog = useCreateUserDialogStore(
 		(state) => state.handleOpen,
 	);
 
-	const handleOpenCreateOrganizationDialog = useCreateOrganizationDialog(
+	const handleOpenCreateOrganizationDialog = useCreateOrganizationDialogStore(
 		(state) => state.handleOpen,
 	);
 

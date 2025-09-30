@@ -6,7 +6,7 @@ import { DataTable } from "@/components/data-table";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { columns } from "@/modules/organizations/components/columns";
-import { useCreateOrganizationDialog } from "@/modules/organizations/components/create-organization-dialog";
+import { useCreateOrganizationDialogStore } from "@/modules/organizations/components/create-organization-dialog";
 import { UpdateOrganizationDialog } from "@/modules/organizations/components/update-organization-dialog";
 import { organizationsQueryOption } from "@/modules/organizations/query-options";
 
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authed/a/organizations")({
 });
 
 function RouteComponent() {
-	const handleOpenCreateOrganizationDialog = useCreateOrganizationDialog(
+	const handleOpenCreateOrganizationDialog = useCreateOrganizationDialogStore(
 		(state) => state.handleOpen,
 	);
 

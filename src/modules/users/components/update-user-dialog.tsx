@@ -18,7 +18,7 @@ import {
 import {
 	type BaseDialogStore,
 	createDialogStore,
-} from "@/stores/create-dialog-stores";
+} from "@/stores/create-dialog-store";
 
 interface UpdateUserDialogStore extends BaseDialogStore {
 	userId: User["id"] | null;
